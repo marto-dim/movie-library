@@ -1,23 +1,11 @@
-package com.telerikacademy.web.movielibrary.model;
+package com.telerikacademy.web.movielibrary.dto.movie;
 
-import jakarta.persistence.*;
+public class MovieResponseDto {
 
-@Entity
-@Table(name = "movies")
-public class Movie {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
     private String title;
-
     private String director;
-
-    @Column(name = "release_year")
     private Integer releaseYear;
-
     private Double rating;
 
     public Long getId() {
