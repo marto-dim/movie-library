@@ -20,6 +20,13 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
 
+                        // Swagger & OpenAPI (PUBLIC)
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+
                         // READ access
                         .requestMatchers(HttpMethod.GET, "/api/movies/**")
                         .hasAnyRole("USER", "ADMIN")
