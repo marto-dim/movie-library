@@ -5,12 +5,17 @@ import com.telerikacademy.web.movielibrary.config.OmdbProperties;
 import com.telerikacademy.web.movielibrary.dto.omdb.OmdbResponse;
 import com.telerikacademy.web.movielibrary.model.Movie;
 import com.telerikacademy.web.movielibrary.repository.MovieRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MovieRatingAsyncServiceImpl {
+
+    private static final Logger log =
+            LoggerFactory.getLogger(MovieRatingAsyncServiceImpl.class);
 
     private final MovieRepository movieRepository;
     private final OmdbClient omdbClient;
@@ -51,7 +56,7 @@ public class MovieRatingAsyncServiceImpl {
             }
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.warn("Failed to enrich rating for movieId={}", movieId, ex);
         }
     }
 }

@@ -18,8 +18,16 @@ public class OmdbResponse {
         return response;
     }
 
+    public void setImdbRating(String imdbRating) {
+        this.imdbRating = imdbRating;
+    }
+
     public boolean isSuccessful() {
         return "True".equalsIgnoreCase(response);
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
     }
 }
 
