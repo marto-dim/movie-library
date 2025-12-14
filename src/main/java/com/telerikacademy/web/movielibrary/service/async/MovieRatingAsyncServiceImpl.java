@@ -1,5 +1,8 @@
 package com.telerikacademy.web.movielibrary.service.async;
 
+import com.telerikacademy.web.movielibrary.client.omdb.OmdbClient;
+import com.telerikacademy.web.movielibrary.config.OmdbProperties;
+import com.telerikacademy.web.movielibrary.dto.omdb.OmdbResponse;
 import com.telerikacademy.web.movielibrary.model.Movie;
 import com.telerikacademy.web.movielibrary.repository.MovieRepository;
 import org.springframework.scheduling.annotation.Async;
@@ -10,28 +13,45 @@ import org.springframework.transaction.annotation.Transactional;
 public class MovieRatingAsyncServiceImpl {
 
     private final MovieRepository movieRepository;
+    private final OmdbClient omdbClient;
+    private final OmdbProperties omdbProperties;
 
-    public MovieRatingAsyncServiceImpl(MovieRepository movieRepository) {
+    public MovieRatingAsyncServiceImpl(
+            MovieRepository movieRepository,
+            OmdbClient omdbClient,
+            OmdbProperties omdbProperties) {
+
         this.movieRepository = movieRepository;
+        this.omdbClient = omdbClient;
+        this.omdbProperties = omdbProperties;
     }
 
     @Async
     @Transactional
     public void enrichRating(Long movieId) {
+
+        Movie movie = movieRepository.findById(movieId).orElse(null);
+        if ( movie == null ) {
+            return;
+        }
+
         try {
-            // simulate slow external API
-            Thread.sleep(10000);
+            OmdbResponse response = omdbClient.getMovieByTitle(
+                    movie.getTitle(),
+                    omdbProperties.getApiKey()
+            );
 
-            Movie movie = movieRepository.findById(movieId)
-                    .orElseThrow();
+            if ( response != null && response.isSuccessful() ) {
+                String ratingStr = response.getImdbRating();
 
-            // fake rating for now
-            movie.setRating(8.5);
+                if ( ratingStr != null && !"N/A".equalsIgnoreCase(ratingStr) ) {
+                    movie.setRating(Double.parseDouble(ratingStr));
+                    movieRepository.save(movie);
+                }
+            }
 
-            movieRepository.save(movie);
-
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 }

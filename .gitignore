@@ -42,3 +42,6 @@ replay_pid*
 # SQL (local only)
 *.sql
 # !src/main/resources/db/migration/*.sql  # uncomment if using Flyway
+
+# local API keys
+application-local.yml
