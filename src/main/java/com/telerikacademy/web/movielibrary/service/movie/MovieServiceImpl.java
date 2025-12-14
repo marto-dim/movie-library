@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.telerikacademy.web.movielibrary.util.StringErrorConstants.MOVIE_ID_NOT_FOUND;
+
 @Service
 @Transactional
 public class MovieServiceImpl implements MovieService {
@@ -33,8 +35,7 @@ public class MovieServiceImpl implements MovieService {
     @Transactional(readOnly = true)
     public Movie getById(Long id) {
         return movieRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Movie with id " + id + " not found"));
+                .orElseThrow( () -> new EntityNotFoundException( String.format(MOVIE_ID_NOT_FOUND, id)) );
     }
 
     @Override

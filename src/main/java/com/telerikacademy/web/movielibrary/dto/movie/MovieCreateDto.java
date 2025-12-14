@@ -1,9 +1,18 @@
 package com.telerikacademy.web.movielibrary.dto.movie;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+
+import static com.telerikacademy.web.movielibrary.util.ValidationConstants.*;
+
 public class MovieCreateDto {
 
+    @NotBlank(message = TITLE_BLANK_MESSAGE)
     private String title;
+
     private String director;
+
+    @Min(value = MIN_MOVIE_YEAR, message = RELEASE_YEAR_MIN_MESSAGE)
     private Integer releaseYear;
 
     public String getTitle() {
