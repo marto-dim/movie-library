@@ -2,6 +2,7 @@ package com.telerikacademy.web.movielibrary.service.movie;
 
 import com.telerikacademy.web.movielibrary.model.Movie;
 import com.telerikacademy.web.movielibrary.repository.MovieRepository;
+import com.telerikacademy.web.movielibrary.service.async.MovieRatingAsyncServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,14 +16,19 @@ import static com.telerikacademy.web.movielibrary.util.StringErrorConstants.MOVI
 public class MovieServiceImpl implements MovieService {
 
     private final MovieRepository movieRepository;
+    private final MovieRatingAsyncServiceImpl movieRatingAsyncService;
 
-    public MovieServiceImpl(MovieRepository movieRepository) {
+    public MovieServiceImpl(MovieRepository movieRepository, MovieRatingAsyncServiceImpl movieRatingAsyncService) {
         this.movieRepository = movieRepository;
+        this.movieRatingAsyncService = movieRatingAsyncService;
     }
 
     @Override
     public Movie create(Movie movie) {
-        return movieRepository.save(movie);
+        Movie saved = movieRepository.save(movie);
+
+        movieRatingAsyncService.enrichRating(saved.getId());
+        return saved;
     }
 
     @Override
